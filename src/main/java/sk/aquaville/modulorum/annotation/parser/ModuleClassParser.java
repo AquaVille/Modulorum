@@ -54,7 +54,7 @@ public class ModuleClassParser implements ClassAnnotationParser<ModuleMetadataHo
         if (!moduleClass.isAnnotationPresent(Module.class)) {
             throw new MissingAnnotationException("Module class " + moduleClass.getName() + " is missing required @Module annotation.");
         }
-        if (!(moduleClass instanceof Class<? extends AbstractModule>)) {
+        if (!AbstractModule.class.isAssignableFrom(moduleClass)) {
             throw new InvalidClassAnnotationException("Required module class " + moduleClass.getName() + " is not extending AbstractModule class.");
         }
         Module module = moduleClass.getAnnotation(Module.class);
