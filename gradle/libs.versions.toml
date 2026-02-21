@@ -1,0 +1,18 @@
+metadata.format.version = "1.1"
+
+[versions]
+
+lombok = "8.12.2.1"
+annotations = "26.0.1"
+jabel = "0.4.2"
+slf4j = "2.0.16"
+
+[libraries]
+
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+jabel = { group = "com.github.bsideup.jabel", name = "jabel-javac-plugin", version.ref = "jabel" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+[plugins]
+
+lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
