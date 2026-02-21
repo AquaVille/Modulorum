@@ -1,5 +1,6 @@
 plugins {
     java
+    `maven-publish`
     alias(libs.plugins.lombok)
 }
 
@@ -18,6 +19,18 @@ dependencies {
     compileOnly(rootProject.libs.jabel)
 }
 
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+        }
+    }
+}
+
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = "16"
@@ -32,3 +45,4 @@ tasks {
         )
     }
 }
+
