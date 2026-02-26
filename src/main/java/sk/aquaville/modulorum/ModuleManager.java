@@ -88,11 +88,6 @@ public final class ModuleManager {
 
         stack.push(id);
 
-        // ensure metadata registered
-        if (!container.contains(id)) {
-            container.putMetadata(new LoadedModule(id, meta, null));
-        }
-
         for (DependencyMetadataHolder dependency : meta.dependencyMetadataHolder()) {
             boolean optional = dependency.optional();
             switch (dependency.type()) {
@@ -104,10 +99,12 @@ public final class ModuleManager {
                     if (!container.contains(depId)) {
                         if (optional) {
                             loggerInstance.warn("Optional module dependency '{}' for module '{}' not found. Skipping.", depId, id);
-                            break; // skip optional
+                            continue; // skip optional
                         }
 
-                        throw new IllegalStateException("Missing required module metadata for '" + depId + "' required by '" + id + "'");
+                        // When required dependency is missing just return and stop loading process
+                        loggerInstance.warn("Missing required module metadata for '{}' required by '{}'", depId, id);
+                        return;
                     }
 
                     var depMeta = container.get(depId).metadata();
@@ -120,13 +117,20 @@ public final class ModuleManager {
                     if (!pluginCheckPort.isPluginLoaded(pluginId)) {
                         if (optional) {
                             loggerInstance.warn("Optional plugin dependency '{}' for module '{}' not installed. Skipping.", pluginId, id);
-                            break;
+                            continue; // skip optional
                         }
 
-                        throw new IllegalStateException("Module '" + id + "' requires plugin '" + pluginId + "'");
+                        // When required dependency is missing just return and stop loading process
+                        loggerInstance.warn("Module '{}' requires plugin '{}'", id, pluginId);
+                        return;
                     }
                 }
             }
+        }
+
+        // ensure metadata registered
+        if (!container.contains(id)) {
+            container.putMetadata(new LoadedModule(id, meta, null));
         }
 
         // instantiate if not already
